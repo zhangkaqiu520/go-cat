@@ -9,5 +9,5 @@ func TestTree(t *testing.T) {
 	n.Insert("/abc")
 	n.Insert("/abc/ddd/bbb/ccc")
 	n.Insert("/abc/ddd/bbb/ddd")
-	n.Fetch()
+	n.Search("/abc/ddd/bbb/ccc")
 }
