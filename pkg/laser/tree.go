@@ -7,9 +7,10 @@ import (
 )
 
 type Node struct {
-	pattern  string  // 待匹配路由，例如 /p/:lang 只有最后完整的才有
-	part     string  // 路由中的一部分，例如 :lang
-	children []*Node // 子节点，例如 [doc, tutorial, intro]
+	pattern    string  // 待匹配路由，例如 /p/:lang 只有最后完整的才有
+	part       string  // 路由中的一部分，例如 :lang
+	children   []*Node // 子节点，例如 [doc, tutorial, intro]
+	isVariable bool    // 是否是变量
 }
 
 func NewNode() *Node {
@@ -45,7 +46,7 @@ func (n Node) matchChildren(parts []string) *Node {
 		return nil
 	}
 	for _, m := range n.children {
-		if m.part == parts[0] {
+		if m.part == parts[0] || m.isVariable {
 			if m.pattern != "" && len(parts) == 1 {
 				return m
 			}
@@ -71,8 +72,14 @@ func (n *Node) matchChild(pattern string, parts []string) {
 	if len(parts) == 1 {
 		p = pattern
 	}
+
+	isVariable := false
+	if parts[0][0] == ':' {
+		isVariable = true
+	}
+
 	nn := Node{
-		p, parts[0], []*Node{},
+		p, parts[0], []*Node{}, isVariable,
 	}
 
 	n.children = append(n.children, &nn)
